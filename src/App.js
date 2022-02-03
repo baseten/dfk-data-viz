@@ -1,23 +1,25 @@
-import logo from './logo.svg';
-import './App.css';
+import classNames from 'classnames';
+
+import styles from './App.module.css';
+
+import Graph from './Graph';
+import { whaleWatchData } from './data';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className={styles.app}>
+      <Graph data={whaleWatchData.data} />
+
+      <div className={styles.key}>
+        <span className={styles.keyPart}>
+          <span className={classNames(styles.keyBox, styles.bank)} />
+          Circulating xJewel (in Jewel)
+        </span>
+        <span className={styles.keyPart}>
+          <span className={classNames(styles.keyBox, styles.circulating)} />
+          Circulating Jewel
+        </span>
+      </div>
     </div>
   );
 }

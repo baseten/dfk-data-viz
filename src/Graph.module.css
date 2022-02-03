@@ -1,0 +1,55 @@
+.xJewelPath {
+  fill: #62cd51;
+}
+
+.circulatingPath {
+  fill: #009c44;
+}
+
+.dataPoint {
+  stroke: #fbeb74;
+  stroke-width: 2;
+  cursor: pointer;
+}
+
+.dataPoint.circulating {
+  fill: #009c44;
+}
+
+.dataPoint.bank {
+  fill: #62cd51;
+}
+
+.hoverLine {
+  pointer-events: none;
+  stroke: rgba(0, 0, 0, 0.5);
+  stroke-width: 0.5;
+  stroke-dasharray: 6,8;
+  fill: none;
+}
+
+.tooltip {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  text-align: left;
+  font-size: 12px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  color: white;
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+}
+
+.key {
+  font-weight: bold;
+}

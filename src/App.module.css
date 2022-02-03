@@ -1,0 +1,35 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.key {
+  margin-top: 24px;
+  display: grid;
+  gap: 8px;
+}
+
+.keyPart {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 12px;
+}
+
+.keyBox {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  margin-right: 8px;
+}
+
+.keyBox.circulating {
+  background: #009c44;
+}
+
+.keyBox.bank {
+  background: #62cd51;
+}
