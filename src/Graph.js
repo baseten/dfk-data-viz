@@ -12,7 +12,7 @@ import { scaleLinear, scaleTime } from 'd3-scale';
 import { axisLeft, axisRight, axisBottom } from 'd3-axis';
 import { max } from 'd3-array';
 import { path } from 'd3-path';
-import { format } from 'date-fns';
+import { format, isSameDay } from 'date-fns';
 
 import styles from './Graph.module.css';
 
@@ -61,7 +61,12 @@ const Tooltip = ({ datum, x, y, opacity }) => {
     [x, y, opacity],
   );
   const formatter = useMemo(() => new Intl.NumberFormat('en-US'), []);
-  const { date, xJewel, bankJewel, ratio, circulatingJewel } = datum;
+  const priceFormatter = useMemo(
+    () =>
+      new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }),
+    [],
+  );
+  const { date, xJewel, bankJewel, ratio, circulatingJewel, price } = datum;
 
   return (
     <div className={styles.tooltip} style={style}>
@@ -69,6 +74,12 @@ const Tooltip = ({ datum, x, y, opacity }) => {
         <span className={styles.key}>Date:</span>
         <span className={styles.value}>{format(date, 'PPPP')}</span>
       </span>
+      {price && (
+        <span className={styles.row}>
+          <span className={styles.key}>Price:</span>
+          <span className={styles.value}>{priceFormatter.format(price)}</span>
+        </span>
+      )}
       <span className={styles.row}>
         <span className={styles.key}>xJewel:</span>
         <span className={styles.value}>{formatter.format(xJewel)}</span>
@@ -176,10 +187,6 @@ const DataPoint = ({ datum, onMouseEnter, onMouseLeave }) => {
     () => onMouseEnter(datum),
     [datum, onMouseEnter],
   );
-  const handleDataPointLeave = useCallback(
-    () => onMouseLeave(datum),
-    [datum, onMouseLeave],
-  );
 
   return (
     <>
@@ -189,7 +196,7 @@ const DataPoint = ({ datum, onMouseEnter, onMouseLeave }) => {
         cy={datum.circulatingY}
         r={4}
         onMouseEnter={handleDataPointEnter}
-        onMouseLeave={handleDataPointLeave}
+        onMouseLeave={onMouseLeave}
       />
       <circle
         className={classNames(styles.dataPoint, styles.bank)}
@@ -197,22 +204,13 @@ const DataPoint = ({ datum, onMouseEnter, onMouseLeave }) => {
         cy={datum.bankJewelY}
         r={4}
         onMouseEnter={handleDataPointEnter}
-        onMouseLeave={handleDataPointLeave}
+        onMouseLeave={onMouseLeave}
       />
     </>
   );
 };
 
 const Graph = ({ data, priceData, width = 1176, height = 640 }) => {
-  const transformedData = useMemo(
-    () =>
-      data.map((d) => ({
-        ...d,
-        bankJewel: d.xJewel * d.ratio,
-        date: new Date(d.date),
-      })),
-    [data],
-  );
   const transformedPriceData = useMemo(
     () =>
       priceData.map((d) => ({
@@ -220,6 +218,22 @@ const Graph = ({ data, priceData, width = 1176, height = 640 }) => {
         date: new Date(d.date),
       })),
     [priceData],
+  );
+  const transformedData = useMemo(
+    () =>
+      data.map((d) => {
+        const date = new Date(d.date);
+        const closestPrice = transformedPriceData.find((priceDatum) => {
+          return isSameDay(priceDatum.date, date);
+        });
+        return {
+          ...d,
+          bankJewel: d.xJewel * d.ratio,
+          date,
+          price: closestPrice?.price,
+        };
+      }),
+    [data, transformedPriceData],
   );
 
   const { dateDomain, jewelDomain } = useMemo(() => {
@@ -350,6 +364,7 @@ const Graph = ({ data, priceData, width = 1176, height = 640 }) => {
 
         {dataPoints.map((d) => (
           <DataPoint
+            key={d.date.toString()}
             datum={d}
             onMouseEnter={handleDataPointEnter}
             onMouseLeave={handleDataPointLeave}
