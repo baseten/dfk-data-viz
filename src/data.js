@@ -273,7 +273,7 @@ export const whaleWatchData = {
       date: '2021-10-24T23:00:00.000Z',
       xJewel: 5328982,
       xJewelWallets: 6569,
-      circulatingJewel: 47127375,
+      circulatingJewel: 49897653,
       ratio: 1.529,
     },
     {
