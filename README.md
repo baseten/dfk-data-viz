@@ -7,5 +7,5 @@ xJewel/Jewel data is taken from Samichpunch's awesome Whale Watch series.
 
 Cheers,
 * discord: _baseten
-* twitter; _baseten
+* twitter: _baseten
 * web: baseten.co.uk
