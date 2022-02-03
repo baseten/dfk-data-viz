@@ -155,9 +155,9 @@ const useSVGMousePosition = () => {
     if (!isTrackingMouseMove) {
       return;
     }
-    svgRef.current.addEventListener('mousemove', handleMouseMove);
-    return () =>
-      svgRef.current.removeEventListener('mousemove', handleMouseMove);
+    const node = svgRef.current;
+    node.addEventListener('mousemove', handleMouseMove);
+    return () => node.removeEventListener('mousemove', handleMouseMove);
   }, [svgRef, isTrackingMouseMove, handleMouseMove]);
 
   return {
