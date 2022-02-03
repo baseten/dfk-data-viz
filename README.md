@@ -6,6 +6,6 @@ xJewel compared with circulating Jewel, overlaid with the price feed.
 xJewel/Jewel data is taken from Samichpunch's awesome Whale Watch series.
 
 Cheers,
-discord: _baseten
-twitter; _baseten
-web: baseten.co.uk
+* discord: _baseten
+* twitter; _baseten
+* web: baseten.co.uk
