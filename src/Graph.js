@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { select } from 'd3-selection';
 import { scaleLinear, scaleTime } from 'd3-scale';
-import { axisLeft, axisBottom } from 'd3-axis';
+import { axisLeft, axisRight, axisBottom } from 'd3-axis';
 import { max } from 'd3-array';
 import { path } from 'd3-path';
 import { format } from 'date-fns';
@@ -203,7 +203,7 @@ const DataPoint = ({ datum, onMouseEnter, onMouseLeave }) => {
   );
 };
 
-const Graph = ({ data, width = 1176, height = 640 }) => {
+const Graph = ({ data, priceData, width = 1176, height = 640 }) => {
   const transformedData = useMemo(
     () =>
       data.map((d) => ({
@@ -212,6 +212,14 @@ const Graph = ({ data, width = 1176, height = 640 }) => {
         date: new Date(d.date),
       })),
     [data],
+  );
+  const transformedPriceData = useMemo(
+    () =>
+      priceData.map((d) => ({
+        ...d,
+        date: new Date(d.date),
+      })),
+    [priceData],
   );
 
   const { dateDomain, jewelDomain } = useMemo(() => {
@@ -228,6 +236,11 @@ const Graph = ({ data, width = 1176, height = 640 }) => {
       jewelDomain: [maxJewel, 0],
     };
   }, [transformedData]);
+  const priceDomain = useMemo(() => {
+    const maxPrice = max(transformedPriceData, (d) => d.price);
+    // flip for SVG dimensions direction
+    return [maxPrice, 0];
+  }, [transformedPriceData]);
 
   const { dateRange, jewelRange } = useMemo(
     () => ({
@@ -239,8 +252,14 @@ const Graph = ({ data, width = 1176, height = 640 }) => {
 
   const [xScale, xScaleDeps] = useScale(scaleTime, dateDomain, dateRange);
   const [yScale, yScaleDeps] = useScale(scaleLinear, jewelDomain, jewelRange);
+  const [yPriceScale, yPriceScaleDeps] = useScale(
+    scaleLinear,
+    priceDomain,
+    jewelRange,
+  );
   const xAxis = useAxis(axisBottom, xScale);
   const yAxis = useAxis(axisLeft, yScale);
+  const yPriceAxis = useAxis(axisRight, yPriceScale);
 
   const { xJewelPath, circulatingJewelPath, dataPoints } = useMemo(() => {
     const circulatingPath = path();
@@ -281,6 +300,25 @@ const Graph = ({ data, width = 1176, height = 640 }) => {
     };
   }, [transformedData, dateRange, jewelRange, xScale, yScale]);
 
+  const pricePath = useMemo(() => {
+    const p = path();
+
+    transformedPriceData.forEach((d, index) => {
+      const { date, price } = d;
+      const x = xScale(date);
+      const y = yPriceScale(price);
+
+      if (index === 0) {
+        p.moveTo(x, y);
+        return;
+      }
+
+      p.lineTo(x, y);
+    });
+
+    return p.toString();
+  }, [transformedPriceData, xScale, yPriceScale]);
+
   const {
     svgRef,
     tooltipPosition,
@@ -308,6 +346,8 @@ const Graph = ({ data, width = 1176, height = 640 }) => {
         <path className={styles.xJewelPath} d={xJewelPath} />
         <path className={styles.circulatingPath} d={circulatingJewelPath} />
 
+        <path className={styles.pricePath} d={pricePath} />
+
         {dataPoints.map((d) => (
           <DataPoint
             datum={d}
@@ -327,6 +367,13 @@ const Graph = ({ data, width = 1176, height = 640 }) => {
           axis={yAxis}
           axisDeps={yScaleDeps}
           x={MARGIN.left}
+          width={width}
+          height={height}
+        />
+        <Axis
+          axis={yPriceAxis}
+          axisDeps={yPriceScaleDeps}
+          x={width - MARGIN.right}
           width={width}
           height={height}
         />

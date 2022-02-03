@@ -19,6 +19,16 @@
   font-size: 12px;
 }
 
+.keyLine {
+  width: 16px;
+  height: 1px;
+  margin-right: 8px;
+}
+
+.keyLine.price {
+  background: #0f0;
+}
+
 .keyBox {
   width: 16px;
   height: 16px;

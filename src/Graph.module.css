@@ -6,6 +6,11 @@
   fill: #009c44;
 }
 
+.pricePath {
+  fill: none;
+  stroke: #0f0;
+}
+
 .dataPoint {
   stroke: #fbeb74;
   stroke-width: 2;
